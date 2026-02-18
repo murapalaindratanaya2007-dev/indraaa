@@ -1,6 +1,5 @@
 class AVLTree {
 
-    // Node class
     class Node {
         int key, height;
         Node left, right;
@@ -20,12 +19,12 @@ class AVLTree {
         return N.height;
     }
 
-    // Get max of two integers
+    // Get maximum of two integers
     int max(int a, int b) {
         return (a > b) ? a : b;
     }
 
-    // Right rotate
+    // Right rotation (LL case)
     Node rightRotate(Node y) {
         Node x = y.left;
         Node T2 = x.right;
@@ -39,7 +38,7 @@ class AVLTree {
         return x;
     }
 
-    // Left rotate
+    // Left rotation (RR case)
     Node leftRotate(Node x) {
         Node y = x.right;
         Node T2 = y.left;
@@ -60,7 +59,7 @@ class AVLTree {
         return height(N.left) - height(N.right);
     }
 
-    // Insert a node
+    // INSERT
     Node insert(Node node, int key) {
 
         if (node == null)
@@ -71,27 +70,27 @@ class AVLTree {
         else if (key > node.key)
             node.right = insert(node.right, key);
         else
-            return node; // Duplicate keys not allowed
+            return node; // duplicate keys not allowed
 
         node.height = 1 + max(height(node.left), height(node.right));
 
         int balance = getBalance(node);
 
-        // Left Left Case
+        // LL
         if (balance > 1 && key < node.left.key)
             return rightRotate(node);
 
-        // Right Right Case
+        // RR
         if (balance < -1 && key > node.right.key)
             return leftRotate(node);
 
-        // Left Right Case
+        // LR
         if (balance > 1 && key > node.left.key) {
             node.left = leftRotate(node.left);
             return rightRotate(node);
         }
 
-        // Right Left Case
+        // RL
         if (balance < -1 && key < node.right.key) {
             node.right = rightRotate(node.right);
             return leftRotate(node);
@@ -100,7 +99,7 @@ class AVLTree {
         return node;
     }
 
-    // Get node with minimum value
+    // Get minimum value node
     Node minValueNode(Node node) {
         Node current = node;
         while (current.left != null)
@@ -108,20 +107,26 @@ class AVLTree {
         return current;
     }
 
-    // Delete a node
-    Node delete(Node root, int key) {
+    // DELETE
+    Node deleteNode(Node root, int key) {
 
         if (root == null)
             return root;
 
         if (key < root.key)
-            root.left = delete(root.left, key);
+            root.left = deleteNode(root.left, key);
         else if (key > root.key)
-            root.right = delete(root.right, key);
+            root.right = deleteNode(root.right, key);
         else {
 
+            // node with one child or no child
             if ((root.left == null) || (root.right == null)) {
-                Node temp = (root.left != null) ? root.left : root.right;
+                Node temp = null;
+
+                if (temp == root.left)
+                    temp = root.right;
+                else
+                    temp = root.left;
 
                 if (temp == null) {
                     temp = root;
@@ -129,4 +134,69 @@ class AVLTree {
                 } else
                     root = temp;
             } else {
-                Node temp = mi
+                // node with two children
+                Node temp = minValueNode(root.right);
+                root.key = temp.key;
+                root.right = deleteNode(root.right, temp.key);
+            }
+        }
+
+        if (root == null)
+            return root;
+
+        root.height = max(height(root.left), height(root.right)) + 1;
+
+        int balance = getBalance(root);
+
+        // LL
+        if (balance > 1 && getBalance(root.left) >= 0)
+            return rightRotate(root);
+
+        // LR
+        if (balance > 1 && getBalance(root.left) < 0) {
+            root.left = leftRotate(root.left);
+            return rightRotate(root);
+        }
+
+        // RR
+        if (balance < -1 && getBalance(root.right) <= 0)
+            return leftRotate(root);
+
+        // RL
+        if (balance < -1 && getBalance(root.right) > 0) {
+            root.right = rightRotate(root.right);
+            return leftRotate(root);
+        }
+
+        return root;
+    }
+
+    // Preorder traversal
+    void preOrder(Node node) {
+        if (node != null) {
+            System.out.print(node.key + " ");
+            preOrder(node.left);
+            preOrder(node.right);
+        }
+    }
+
+    // Driver
+    public static void main(String[] args) {
+        AVLTree tree = new AVLTree();
+
+        tree.root = tree.insert(tree.root, 10);
+        tree.root = tree.insert(tree.root, 20);
+        tree.root = tree.insert(tree.root, 30);
+        tree.root = tree.insert(tree.root, 40);
+        tree.root = tree.insert(tree.root, 50);
+        tree.root = tree.insert(tree.root, 25);
+
+        System.out.println("Preorder traversal after insertion:");
+        tree.preOrder(tree.root);
+
+        tree.root = tree.deleteNode(tree.root, 40);
+
+        System.out.println("\nPreorder traversal after deletion:");
+        tree.preOrder(tree.root);
+    }
+}
