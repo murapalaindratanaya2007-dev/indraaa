@@ -1,6 +1,5 @@
 import java.util.*;
 
-// -------- GRAPH USING ADJACENCY MATRIX --------
 class GraphMatrix {
     int vertices;
     int[][] adjMatrix;
@@ -12,7 +11,7 @@ class GraphMatrix {
 
     void addEdge(int u, int v) {
         adjMatrix[u][v] = 1;
-        adjMatrix[v][u] = 1;  // Undirected graph
+        adjMatrix[v][u] = 1;
     }
 
     // BFS using Adjacency Matrix
@@ -123,13 +122,13 @@ class GraphList {
 }
 
 
-// -------- MAIN CLASS --------
+// MAIN CLASS
 public class GraphTraversal {
     public static void main(String[] args) {
 
         int v = 5;
 
-        // -------- USING ADJACENCY MATRIX --------
+        // USING ADJACENCY MATRIX 
         GraphMatrix gMatrix = new GraphMatrix(v);
         gMatrix.addEdge(0, 1);
         gMatrix.addEdge(0, 2);
@@ -140,7 +139,7 @@ public class GraphTraversal {
         gMatrix.DFS(0);
 
 
-        // -------- USING ADJACENCY LIST --------
+        // USING ADJACENCY LIST
         GraphList gList = new GraphList(v);
         gList.addEdge(0, 1);
         gList.addEdge(0, 2);
@@ -150,4 +149,5 @@ public class GraphTraversal {
         gList.BFS(0);
         gList.DFS(0);
     }
+
 }
